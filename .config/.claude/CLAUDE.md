@@ -128,56 +128,40 @@ Edit / Write ツールを使ってコードを変更する **前に**、Codex �
 
 #### 操作手順（必ずこの手順に従うこと）
 
-1. **pane セットアップ**: codex pane がなければ作成・起動する
-   ```bash
-   # codex pane の検出
-   CODEX_PANE=""
-   while IFS='|' read -r idx pid cmd; do
-       if pgrep -P "$pid" -f "codex" > /dev/null 2>&1; then
-           CODEX_PANE=$idx; break
-       fi
-   done < <(tmux list-panes -F '#{pane_index}|#{pane_pid}|#{pane_current_command}')
+すべての複雑なロジックは `~/.claude/skills/tmux-agent/bin/` のスクリプトに外部化されている。
+Claude Code からは `bash スクリプト名` の1行で呼び出すこと（改行・リダイレクトを含むインラインスクリプトは禁止）。
 
-   # なければ作成
-   if [ -z "$CODEX_PANE" ]; then
-       tmux split-window -h -p 40 -c "$(pwd)"
-       CODEX_PANE=$(tmux list-panes -F '#{pane_index}' | tail -1)
-       tmux send-keys -t .$CODEX_PANE "codex --no-alt-screen --full-auto" Enter
-       sleep 5
-   fi
+1. **pane セットアップ**: codex pane がなければ作成・起動する（pane index は `/tmp/tmux-codex-pane.txt` に自動保存される）
+   ```bash
+   bash ~/.claude/skills/tmux-agent/bin/tmux-pane-setup.sh
    ```
 
-2. **送信前スナップショット取得**:
+2. **送信前スナップショット取得**（pane index はファイルから自動読み取り）:
    ```bash
-   tmux capture-pane -t .$CODEX_PANE -p -S -200 \
-       | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' \
-       | sed '/^[[:space:]]*$/d' \
-       > /tmp/tmux-before-snapshot.txt
+   bash ~/.claude/skills/tmux-agent/bin/tmux-snapshot.sh
    ```
 
 3. **プロンプト送信（必ず別々の Bash 呼び出しで実行）**:
+   pane ファイルの検証・読み取りはスクリプト内部で行われる。
    ```bash
    # Bash 呼び出し1: テキスト入力
-   tmux send-keys -t .$CODEX_PANE -l "レビュー依頼のテキスト"
+   bash ~/.claude/skills/tmux-agent/bin/tmux-send-text.sh "レビュー依頼のテキスト"
    ```
    ```bash
    # Bash 呼び出し2: Enter で送信確定（必ず別の Bash 呼び出し！）
-   tmux send-keys -t .$CODEX_PANE Enter
+   bash ~/.claude/skills/tmux-agent/bin/tmux-send-enter.sh
    ```
 
-4. **完了待機ポーリング → 出力キャプチャ**:
+4. **完了待機ポーリング → 出力キャプチャ**（pane index はファイルから自動読み取り）:
    ```bash
-   sleep 5  # 初回待機
-   # 3秒間隔で "context left" パターン検出 or 出力安定化を待つ
-   # 詳細は ~/.claude/skills/tmux-agent/output-parsing.md 参照
-   tmux capture-pane -t .$CODEX_PANE -p -S -200 \
-       | sed 's/\x1b\[[0-9;]*[a-zA-Z]//g' \
-       | sed '/^[[:space:]]*$/d'
+   bash ~/.claude/skills/tmux-agent/bin/tmux-poll.sh
    ```
 
-5. **差分抽出**: before スナップショットとの差分から新しい出力のみ取得
+5. **差分抽出**: Claude Code 側で送信プロンプト（› で始まる行）と応答（• で始まる行）を識別する
 
-**禁止事項**: `codex exec` を使ってはならない。必ず上記の tmux pane 対話手順を踏むこと。
+**禁止事項**:
+- `codex exec` を使ってはならない。必ず上記の tmux pane 対話手順を踏むこと。
+- 改行を含む複数行スクリプトや `>` リダイレクトを Bash ツールに直接書かないこと。必ず bin/ のスクリプトを使うこと。
 
 ### レビュー依頼のフォーマット
 
@@ -198,20 +182,66 @@ Codex に送るプロンプトには以下を含める:
 （関連するファイルパスや該当コードの抜粋）
 ```
 
-### ワークフロー
+### ワークフロー（反復レビューループ）
 
-1. 重要な判断に直面したら、まずユーザーに「Codex にレビューを依頼します」と報告
-2. 上記の操作手順に従い、tmux pane で codex にレビュー依頼を送信
-3. ポーリングで完了を待ち、codex の回答をキャプチャしてユーザーに共有
-4. 必要に応じて追加の議論ラウンドを実施（同じ pane に追加送信）
-5. 結論をまとめてユーザーに提示し、承認を得てから実装に着手
+```
+┌─ 1. レビュー依頼 ─────────────────────────────────┐
+│  Codex に方針 or コード変更のレビューを送信        │
+└──────────────────────────┬──────────────────────────┘
+                           ▼
+┌─ 2. Codex 回答を受け取る ─────────────────────────┐
+│  指摘事項を確認し、ユーザーに共有                  │
+└──────────────────────────┬──────────────────────────┘
+                           ▼
+              ┌─ Medium/High 指摘あり？ ─┐
+              │                          │
+           Yes│                       No │
+              ▼                          ▼
+┌─ 3. 指摘に基づき修正 ─┐  ┌─ 5. 完了 ──────────┐
+│  コードを修正する      │  │  ユーザーに最終報告 │
+└───────────┬────────────┘  └────────────────────┘
+            ▼
+┌─ 4. 再レビュー依頼 ───────────────────────────────┐
+│  修正内容を Codex に送信して再検証を依頼           │
+│  （同じ pane に追加送信）                          │
+└──────────────────────────┬──────────────────────────┘
+            │
+            └───────── 2 に戻る（Medium/High が0になるまで）
+```
+
+**具体的な手順:**
+
+1. ユーザーに「Codex にレビューを依頼します」と報告
+2. tmux pane で Codex にレビュー依頼を送信
+3. ポーリングで完了を待ち、Codex の回答をキャプチャ
+4. 回答に指摘事項（Medium/High）がある場合:
+   a. 指摘内容をユーザーに共有
+   b. 指摘に基づきコードを修正（Edit/Write ツール）
+   c. 修正内容を Codex に再送信して再検証を依頼
+   d. 再びポーリング → 回答キャプチャ → 指摘確認
+   e. **Medium/High 指摘が0になるまで繰り返す**
+5. Medium/High 指摘がなくなったら、最終結果をユーザーに報告
+
+**ループ上限**: 最大5回の反復。5回で解消しない場合は途中経過をユーザーに報告し判断を委ねる。
+**早期エスカレーション**: 同一の指摘（同じ指摘IDまたは同じ内容の Medium/High）が2回連続で再発した場合は、ループを中断してユーザーに判断を委ねる。
+
+**再レビュー依頼のフォーマット**:
+```
+[再レビュー Round {N}]
+前回指摘への対応:
+- {指摘ID} {Severity}({指摘の要約}): {対応結果 fixed/won't-fix} — {変更概要 or 理由}
+- {指摘ID} {Severity}({指摘の要約}): {対応結果} — {変更概要 or 理由}
+変更ファイル: {ファイルパス}
+再検証して、まだ問題が残っているか確認してほしい。
+```
 
 ### 注意事項
 
 - **`codex exec` は絶対に使わない** — 必ず tmux pane 対話で行う
 - Codex の回答は参考意見として扱い、最終判断はユーザーに委ねる
 - Codex とのやりとりは常にユーザーに可視化する（隠さない）
-- レビュー議論に時間がかかりすぎる場合は、途中経過をユーザーに報告する
+- 反復レビュー中も各ラウンドの結果をユーザーに逐次報告する
+- Low の指摘はループ継続の対象外（任意対応）。Medium/High のみループ対象
 
 ## Obsidian Vault統合
 

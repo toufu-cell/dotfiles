@@ -76,3 +76,10 @@
 # Playwright CLI
 .playwright-cli/
 .config/.claude/skills/remotion-best-practices
+
+# Claude Code - 株系スキル（未使用）
+.config/.claude/skills/jp-stock-analysis/
+.config/.claude/skills/jp-stock-news/
+.config/.claude/skills/jp-stock-common/
+.config/.claude/commands/jp-stock-analysis.md
+.config/.claude/commands/jp-stock-news.md

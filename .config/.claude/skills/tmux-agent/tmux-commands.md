@@ -58,8 +58,11 @@ tmux send-keys -t .+1 "command" Enter
 # シェルへの送信（テキスト + Enter を一括）
 tmux send-keys -t .$PANE "シェルコマンド" Enter
 
-# TUI アプリ（codex 等）への送信（-l でリテラル + Enter を分離）
-# 重要: TUI アプリには必ず -l フラグを使い、Enter は別の send-keys で送る
+# TUI アプリ（codex 等）への送信
+# 重要: Claude Code からは直接呼ばず、ラッパースクリプトを使うこと
+# bash ~/.claude/skills/tmux-agent/bin/tmux-send-text.sh "プロンプトテキスト"
+# bash ~/.claude/skills/tmux-agent/bin/tmux-send-enter.sh
+# 参考（低レベル API）:
 tmux send-keys -t .$PANE -l "プロンプトテキスト"
 tmux send-keys -t .$PANE Enter
 

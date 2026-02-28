@@ -7,6 +7,8 @@
   "permissions": {
     "allow": [
       "Read",
+      "Bash(bash ~/.claude/skills/tmux-agent/bin/*)",
+      "Bash(tee /tmp/*)",
       "WebFetch",
       "WebSearch",
       "Tool:mcp__playwright__*",
@@ -18,6 +20,7 @@
       "Bash(bun *)",
       "Bash(python *)",
       "Bash(python3 *)",
+      "Bash(uv run *)",
       "Bash(pip *)",
       "Bash(pip3 *)",
       "Bash(ls *)",
@@ -49,26 +52,21 @@
       "Bash(wc *)",
       "Bash(tail *)",
       "Bash(sed *)",
+      "Bash(test *)",
       "Bash(cat /tmp/tmux*)",
       "Bash(cat /tmp/codex*)",
       "Bash(rm -f /tmp/tmux*)",
       "Bash(rm -f /tmp/codex*)",
-      "Bash(CODEX_PANE=*)",
-      "Bash(BEFORE*)",
-      "Bash(AFTER*)",
-      "Bash(TIMEOUT=*)",
-      "Bash(MAX_TIMEOUT=*)",
-      "Bash(ELAPSED=*)",
-      "Bash(PREV*)",
-      "Bash(STABLE*)",
-      "Bash(OUTPUT=*)",
-      "Bash(PROMPT*)",
-      "Bash(MARKER*)",
-      "Bash(CURRENT*)",
-      "Bash(LAST*)",
-      "Bash(WORKING*)",
-      "Bash(while *)",
-      "Bash(if *)"
+      "Bash(find *)",
+      "Bash(date *)",
+      "Bash(zsh *)",
+      "Bash(TZ=*)",
+      "Bash(diff *)",
+      "Bash(sort *)",
+      "Bash(uniq *)",
+      "Bash(cut *)",
+      "Bash(xargs *)",
+      "Skill(*)"
     ],
     "defaultMode": "default"
   },
@@ -77,5 +75,8 @@
     "PreToolUse": [],
     "PostToolUse": []
   },
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": false,
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  }
 }

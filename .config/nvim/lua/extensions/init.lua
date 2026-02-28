@@ -18,7 +18,7 @@ local plugins = {
   -- ステータスライン
   {
     'nvim-lualine/lualine.nvim',
-    event = { 'VimEnter' },
+    event = 'VeryLazy',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
     config = function()
       require('lualine').setup {
@@ -36,6 +36,11 @@ local plugins = {
     event = { 'SearchWrapped' },
     config = function()
       require('hlslens').setup()
+      -- hlslens ロード時に scrollbar の検索ハンドラーを初期化
+      local ok, search = pcall(require, 'scrollbar.handlers.search')
+      if ok then
+        search.setup()
+      end
     end,
   },
   -- Git変更表示
@@ -52,12 +57,11 @@ local plugins = {
     event = { 'BufNewFile', 'BufReadPre' },
     dependencies = {
       'lewis6991/gitsigns.nvim',
-      'kevinhwang91/nvim-hlslens',
     },
     config = function()
       require('scrollbar').setup()
       require('scrollbar.handlers.gitsigns').setup()
-      require('scrollbar.handlers.search').setup()
+      -- search ハンドラーは hlslens 側の config で初期化する
     end,
   },
   -- ファジーファインダー（ファイル・テキスト検索）
@@ -159,7 +163,7 @@ local plugins = {
   -- Vimモーション練習（悪い習慣の矯正）
   {
     'm4xshen/hardtime.nvim',
-    lazy = false,
+    event = 'VeryLazy',
     dependencies = { 'MunifTanjim/nui.nvim' },
     opts = {
       max_count = 5,        -- 5回連打まで許可

@@ -1,5 +1,14 @@
 # Codex CLI 統合ガイド
 
+## スクリプトによる実行
+
+以下の関数は `bin/` のスクリプトに実装済み。実際の操作ではスクリプトを直接呼び出すこと。
+
+| スクリプト | 対応する関数 |
+|-----------|-------------|
+| `bin/tmux-pane-setup.sh` | `wait_for_codex_ready()` |
+| `bin/tmux-codex-recover.sh` | `detect_codex_crash()`, `recover_codex()` |
+
 ## 概要
 
 OpenAI の Codex CLI を Claude Code から操作するための固有情報。
@@ -158,7 +167,7 @@ recover_codex() {
     tmux split-window -h -c "#{pane_current_path}"
     NEW_PANE=$(tmux list-panes -F '#{pane_index}' | tail -1)
 
-    # codex を再起動
+    # codex を再起動（シェルコマンドなので send-keys 直接でOK）
     tmux send-keys -t .$NEW_PANE "codex --no-alt-screen --full-auto" Enter
 
     # 起動待機
@@ -194,14 +203,15 @@ tmux split-window -h -p 40 -c "#{pane_current_path}"
 - exec モードの `-o` オプションはファイルが既存の場合上書きされる
 - 長いプロンプトは改行で分割せず、1行で送信する
 - プロンプト内のシングルクォートは `'\''` でエスケープする
-- **TUI への send-keys は必ず別々の Bash ツール呼び出しで2ステップに分ける**:
+- **TUI への送信は必ずラッパースクリプト経由で、別々の Bash ツール呼び出しで2ステップに分ける**:
   ```bash
   # Bash 呼び出し1: テキスト入力
-  tmux send-keys -t .$PANE -l "プロンプト"
+  bash ~/.claude/skills/tmux-agent/bin/tmux-send-text.sh "プロンプト"
 
   # Bash 呼び出し2: Enter で送信確定（必ず別の Bash 呼び出し！）
-  tmux send-keys -t .$PANE Enter
+  bash ~/.claude/skills/tmux-agent/bin/tmux-send-enter.sh
   ```
+  `tmux send-keys` を直接呼ばないこと（`$()` コマンド置換による承認プロンプトが発生する）。
   同一 Bash 呼び出し内でまとめると Enter が反映されないことがある。
 - 初回プロンプトは引数付き起動でも渡せる:
   ```bash
