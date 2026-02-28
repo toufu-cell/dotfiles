@@ -7,6 +7,8 @@
   "permissions": {
     "allow": [
       "Read",
+      "Edit",
+      "Write",
       "Bash(bash ~/.claude/skills/tmux-agent/bin/*)",
       "Bash(tee /tmp/*)",
       "WebFetch",
@@ -66,12 +68,49 @@
       "Bash(uniq *)",
       "Bash(cut *)",
       "Bash(xargs *)",
+      "Bash(touch *)",
+      "Bash(cat *)",
+      "Bash(head *)",
+      "Bash(grep *)",
+      "Bash(awk *)",
+      "Bash(realpath *)",
+      "Bash(dirname *)",
+      "Bash(basename *)",
       "Skill(*)"
     ],
     "defaultMode": "default"
   },
   "hooks": {
-    "Stop": [],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [],
     "PostToolUse": []
   },
