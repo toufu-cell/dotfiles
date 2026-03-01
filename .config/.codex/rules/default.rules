@@ -1,0 +1,90 @@
+# Codex CLI prefix_rule 設定
+# 3段階: allow (読み取り専用) / prompt (副作用あり) / forbidden (明示的禁止)
+#
+# 注意: shell redirection（>）による書き込みは prefix_rule では制御不可。
+# この制御は sandbox_mode が担う。デフォルト sandbox_mode = "read-only" では
+# 書き込み自体がブロックされるため、allow コマンドでもリダイレクト書き込みは発生しない。
+# profiles.auto（workspace-write）使用時はワークスペース内のみ書き込み可能。
+
+# ===== allow: 読み取り専用（引数で任意コマンド実行不可能なもののみ） =====
+
+prefix_rule(pattern=["ls"], decision="allow")
+prefix_rule(pattern=["cat"], decision="allow")
+prefix_rule(pattern=["head"], decision="allow")
+prefix_rule(pattern=["tail"], decision="allow")
+prefix_rule(pattern=["grep"], decision="allow")
+prefix_rule(pattern=["tree"], decision="allow")
+prefix_rule(pattern=["wc"], decision="allow")
+prefix_rule(pattern=["diff"], decision="allow")
+prefix_rule(pattern=["sort"], decision="allow")
+prefix_rule(pattern=["uniq"], decision="allow")
+prefix_rule(pattern=["cut"], decision="allow")
+prefix_rule(pattern=["realpath"], decision="allow")
+prefix_rule(pattern=["dirname"], decision="allow")
+prefix_rule(pattern=["basename"], decision="allow")
+prefix_rule(pattern=["pwd"], decision="allow")
+prefix_rule(pattern=["which"], decision="allow")
+prefix_rule(pattern=["date"], decision="allow")
+prefix_rule(pattern=["echo"], decision="allow")
+prefix_rule(pattern=["test"], decision="allow")
+prefix_rule(pattern=["jq"], decision="allow")
+prefix_rule(pattern=["rg"], decision="allow")
+prefix_rule(pattern=["printenv"], decision="allow")
+
+# ===== prompt: 副作用あり、または引数で任意コマンド実行可能 =====
+
+# バージョン管理
+prefix_rule(pattern=["git"], decision="prompt")
+prefix_rule(pattern=["gh"], decision="prompt")
+
+# 引数で任意コマンド実行可能（find -exec, awk system(), env CMD 等）
+prefix_rule(pattern=["find"], decision="prompt")
+prefix_rule(pattern=["awk"], decision="prompt")
+prefix_rule(pattern=["env"], decision="prompt")
+prefix_rule(pattern=["uv", "run"], decision="prompt")
+
+# sed は -i で書き込み可能なため prompt
+prefix_rule(pattern=["sed"], decision="prompt")
+
+# パッケージマネージャ/ランタイム
+prefix_rule(pattern=["npm"], decision="prompt")
+prefix_rule(pattern=["npx"], decision="prompt")
+prefix_rule(pattern=["node"], decision="prompt")
+prefix_rule(pattern=["bun"], decision="prompt")
+prefix_rule(pattern=["python"], decision="prompt")
+prefix_rule(pattern=["python3"], decision="prompt")
+prefix_rule(pattern=["pip"], decision="prompt")
+prefix_rule(pattern=["pip3"], decision="prompt")
+
+# ファイル書き込み系
+prefix_rule(pattern=["mkdir"], decision="prompt")
+prefix_rule(pattern=["cp"], decision="prompt")
+prefix_rule(pattern=["mv"], decision="prompt")
+prefix_rule(pattern=["touch"], decision="prompt")
+prefix_rule(pattern=["chmod"], decision="prompt")
+prefix_rule(pattern=["ln"], decision="prompt")
+
+# ビルド/コンパイル
+prefix_rule(pattern=["make"], decision="prompt")
+prefix_rule(pattern=["cargo"], decision="prompt")
+prefix_rule(pattern=["go"], decision="prompt")
+prefix_rule(pattern=["rustc"], decision="prompt")
+
+# ネットワーク
+prefix_rule(pattern=["curl"], decision="prompt")
+prefix_rule(pattern=["wget"], decision="prompt")
+
+# システム
+prefix_rule(pattern=["brew"], decision="prompt")
+prefix_rule(pattern=["docker"], decision="prompt")
+prefix_rule(pattern=["tmux"], decision="prompt")
+prefix_rule(pattern=["sleep"], decision="prompt")
+prefix_rule(pattern=["xargs"], decision="prompt")
+prefix_rule(pattern=["zsh"], decision="prompt")
+prefix_rule(pattern=["tee"], decision="prompt")
+prefix_rule(pattern=["pgrep"], decision="prompt")
+
+# ===== forbidden: 明示的禁止 =====
+
+prefix_rule(pattern=["rm", "-rf", "/"], decision="forbidden")
+prefix_rule(pattern=["rm", "-rf", "~"], decision="forbidden")
