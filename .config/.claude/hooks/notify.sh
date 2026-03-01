@@ -142,6 +142,9 @@ case "$EVENT" in
     "Stop")
         TITLE="Claude Code - 完了"
         MSG="応答が完了しました"
+        PUSH_NTFY=true
+        NTFY_PRIORITY="default"
+        NTFY_TAGS="checkered_flag"
         ;;
     *)
         exit 0
