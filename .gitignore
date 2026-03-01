@@ -73,16 +73,8 @@
 # Codex CLI - ntfy.sh credentials (keep notify.sh only)
 .config/.codex/hooks/ntfy.conf
 
-# Codex CLI - skills managed elsewhere (keep only migrated skills)
-.config/.codex/skills/.system/
-.config/.codex/skills/competitive-programming/
-.config/.codex/skills/design/
-.config/.codex/skills/obsidian-research/
-.config/.codex/skills/quurandot/
-.config/.codex/skills/recipe/
-.config/.codex/skills/remotion-best-practices
-.config/.codex/skills/security-review/
-.config/.codex/skills/skill-creator/
+# Codex CLI - skills (managed separately)
+.config/.codex/skills/
 
 # zsh-abbr - user abbreviations (personal, empty by default)
 .config/zsh-abbr/user-abbreviations
