@@ -24,3 +24,14 @@ vim.keymap.set('n', '<Leader>q', ':q<CR>')   -- スペース+qで終了
 -- バッファ移動
 vim.keymap.set('n', '<Leader>n', ':bnext<CR>')      -- 次のバッファ
 vim.keymap.set('n', '<Leader>p', ':bprevious<CR>')  -- 前のバッファ
+
+-- :messages の内容をクリップボードにコピー
+vim.keymap.set('n', '<Leader>cm', function()
+    local ok, result = pcall(vim.api.nvim_exec2, 'messages', { output = true })
+    if ok then
+        vim.fn.setreg('+', result.output)
+        vim.notify('Messages copied to clipboard', vim.log.levels.INFO)
+    else
+        vim.notify('Failed to copy messages', vim.log.levels.ERROR)
+    end
+end, { desc = 'Copy :messages to clipboard', silent = true })
