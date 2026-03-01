@@ -160,6 +160,31 @@ local plugins = {
       { "<c-s>", mode = { "c" }, function() require("flash").toggle() end, desc = "Toggle Flash Search" },
     },
   },
+  -- デバッグ: DAP クライアント + UI
+  {
+    'rcarriga/nvim-dap-ui',
+    dependencies = {
+      'mfussenegger/nvim-dap',
+      'nvim-neotest/nvim-nio',
+    },
+    keys = {
+      { '<leader>Du', desc = 'DAP UI: Toggle' },
+      { '<leader>Dc', desc = 'DAP: Continue' },
+      { '<leader>Db', desc = 'DAP: Toggle Breakpoint' },
+      { '<leader>DB', desc = 'DAP: Conditional Breakpoint' },
+      { '<leader>Dn', desc = 'DAP: Step Over' },
+      { '<leader>Di', desc = 'DAP: Step Into' },
+      { '<leader>Do', desc = 'DAP: Step Out' },
+      { '<leader>Dr', desc = 'DAP: Open REPL' },
+      { '<leader>Dl', desc = 'DAP: Run Last' },
+      { '<leader>Dx', desc = 'DAP: Terminate' },
+      { '<leader>De', mode = { 'n', 'v' }, desc = 'DAP UI: Eval' },
+      { '<F5>', desc = 'DAP: Continue' },
+      { '<F10>', desc = 'DAP: Step Over' },
+      { '<F11>', desc = 'DAP: Step Into' },
+    },
+    config = function() require 'extensions.dap' end,
+  },
   -- Vimモーション練習（悪い習慣の矯正）
   {
     'm4xshen/hardtime.nvim',
