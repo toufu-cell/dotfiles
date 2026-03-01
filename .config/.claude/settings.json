@@ -6,6 +6,8 @@
   "includeCoAuthoredBy": true,
   "permissions": {
     "allow": [
+      "Glob",
+      "Grep",
       "Read",
       "Edit",
       "Write",
@@ -76,6 +78,8 @@
       "Bash(realpath *)",
       "Bash(dirname *)",
       "Bash(basename *)",
+      "Bash(VAULT=*)",
+      "Bash(RECIPE_DIR=*)",
       "Skill(*)"
     ],
     "defaultMode": "default"
@@ -103,6 +107,15 @@
       },
       {
         "matcher": "idle_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash ~/.claude/hooks/notify.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "elicitation_dialog",
         "hooks": [
           {
             "type": "command",

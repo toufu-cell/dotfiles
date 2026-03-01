@@ -1,0 +1,6 @@
+# ntfy.sh push notification configuration
+# Setup: cp ntfy.conf.example ntfy.conf && chmod 600 ntfy.conf
+NTFY_TOPIC=""                    # トピック名（必須。推測困難なランダム文字列推奨）
+NTFY_SERVER="https://ntfy.sh"   # サーバーURL（セルフホスト時に変更）
+NTFY_ENABLED=true                # push 通知の有効/無効
+NTFY_TOKEN=""                    # API トークン（空なら macOS Keychain から取得試行）

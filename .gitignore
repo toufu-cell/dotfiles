@@ -32,6 +32,9 @@
 # Claude Code - project-specific settings (repo root)
 /.claude/
 
+# Claude Code - ntfy.sh credentials (keep ntfy.conf.example only)
+.config/.claude/hooks/ntfy.conf
+
 # Claude Code - personal settings and cache
 .config/.claude/settings.local.json
 .config/.claude/backups/
