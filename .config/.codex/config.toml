@@ -1,0 +1,66 @@
+model = "gpt-5.3-codex"
+model_reasoning_effort = "high"
+personality = "pragmatic"
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
+web_search = "live"
+notify = ["bash", "/Users/k23062kk/.codex/hooks/notify.sh"]
+
+[tui]
+notifications = true
+
+[profiles.auto]
+approval_policy = "on-request"
+sandbox_mode = "workspace-write"
+
+[profiles.safe]
+approval_policy = "untrusted"
+sandbox_mode = "read-only"
+
+[projects."/Users/k23062kk"]
+trust_level = "trusted"
+
+[projects."/Applications/MAMP"]
+trust_level = "trusted"
+
+[projects."/Applications/MAMP/htdocs"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/plamo"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/translate"]
+trust_level = "trusted"
+
+[projects."/Applications/MAMP/htdocs/06"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/Desktop/nodejs/06"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/Desktop/nodejs/last"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/dotfiles"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/Library/Mobile Documents/iCloud~md~obsidian/Documents/Obsidian_Vault"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/mediapipe"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/youtubecomments"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/Desktop/nodejs/last2"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/vde-monitor-main"]
+trust_level = "trusted"
+
+[projects."/Users/k23062kk/remotion-test"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+gpt-5-codex = "gpt-5.2-codex"
