@@ -58,7 +58,6 @@
 
 # Codex CLI - authentication, cache, and session data
 .config/.codex/auth.json
-.config/.codex/config.toml
 .config/.codex/history.jsonl
 .config/.codex/models_cache.json
 .config/.codex/version.json
@@ -67,8 +66,23 @@
 .config/.codex/sessions/
 .config/.codex/log/
 .config/.codex/tmp/
-.config/.codex/skills/
+.config/.codex/shell_snapshots/
+.config/.codex/state_*.sqlite*
 .config/.codex/.DS_Store
+
+# Codex CLI - ntfy.sh credentials (keep notify.sh only)
+.config/.codex/hooks/ntfy.conf
+
+# Codex CLI - skills managed elsewhere (keep only migrated skills)
+.config/.codex/skills/.system/
+.config/.codex/skills/competitive-programming/
+.config/.codex/skills/design/
+.config/.codex/skills/obsidian-research/
+.config/.codex/skills/quurandot/
+.config/.codex/skills/recipe/
+.config/.codex/skills/remotion-best-practices
+.config/.codex/skills/security-review/
+.config/.codex/skills/skill-creator/
 
 # zsh-abbr - user abbreviations (personal, empty by default)
 .config/zsh-abbr/user-abbreviations
