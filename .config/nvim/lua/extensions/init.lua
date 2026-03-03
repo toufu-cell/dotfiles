@@ -196,6 +196,19 @@ local plugins = {
       disable_mouse = false,      -- マウス操作を許可
     },
   },
+  -- 統合ターミナル（Claude Code / Codex CLI 専用ターミナル付き）
+  {
+    'akinsho/toggleterm.nvim',
+    version = '*',
+    keys = {
+      { '<C-\\>', desc = 'Terminal: Toggle' },
+      { '<leader>tt', desc = 'Terminal: Toggle' },
+      { '<leader>tf', desc = 'Terminal: Float' },
+      { '<leader>tc', desc = 'Terminal: Claude Code' },
+      { '<leader>tx', desc = 'Terminal: Codex CLI' },
+    },
+    config = function() require 'extensions.toggleterm' end,
+  },
 }
 
 local opts = {
