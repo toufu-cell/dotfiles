@@ -19,3 +19,5 @@ Claude Code からは `bash bin/スクリプト名.sh` の1行で呼び出すこ
 | `bin/tmux-send-text.sh` | テキスト送信（pane ファイル検証込み） |
 | `bin/tmux-send-enter.sh` | Enter キー送信（pane ファイル検証込み） |
 | `bin/tmux-codex-recover.sh` | クラッシュ検出・リカバリー |
+| `bin/codex-review-init.sh` | モード検出（tmux / exec） |
+| `bin/codex-exec-review.sh` | exec モードでのレビュー実行 |

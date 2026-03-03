@@ -38,10 +38,11 @@ codex --full-auto
 codex --no-alt-screen --full-auto
 ```
 
-## exec モード（推奨）
+## exec モード（tmux 不可時のフォールバック）
 
+tmux が利用できない環境（VS Code ターミナル、通常ターミナル等）でのフォールバック手段。
 対話セッションを経由せず、単発で実行して結果を取得する。
-**出力取得の確実性が最も高い**。
+**tmux 利用可能時は対話モードを優先すること。** exec モードは `codex-exec-review.sh` 経由で使用する。
 
 ### ファイル出力
 
