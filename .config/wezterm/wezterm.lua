@@ -246,5 +246,37 @@ config.foreground_text_hsb = {
  saturation = 1.0,
  brightness = 1.2,
 }
+
+-- cursor
+config.default_cursor_style = 'SteadyBar'
+config.cursor_blink_rate = 0
+
+-- tab bar
+config.use_fancy_tab_bar = false
+config.tab_max_width = 28
+
+-- window size / decorations
+config.initial_cols = 140
+config.initial_rows = 38
+config.window_decorations = 'RESIZE'
+
+-- GPU rendering (uncomment to try WebGpu, fallback to OpenGL if laggy)
+-- config.front_end = 'WebGpu'
+
+-- Quick Select patterns (appended to defaults)
+config.quick_select_patterns = {
+    '[0-9a-f]{7,40}',           -- git commit hash
+    'https?://\\S+',            -- URL
+    '[\\w./+-]+:\\d+',          -- file:line (e.g. src/main.rs:42)
+}
+
+-- Hyperlink rules (default + custom)
+config.hyperlink_rules = wezterm.default_hyperlink_rules()
+-- GitHub issue/PR shorthand: org/repo#123
+table.insert(config.hyperlink_rules, {
+    regex = '([\\w.-]+/[\\w.-]+)#(\\d+)',
+    format = 'https://github.com/$1/issues/$2',
+})
+
 -- and finally, return the configuration to wezterm
 return config
