@@ -146,6 +146,19 @@ local plugins = {
       { '<C-l>', '<cmd>TmuxNavigateRight<CR>', mode = { 'n', 't' }, desc = 'Navigate Right' },
     },
   },
+  -- Git差分ビューア（サイドバイサイド diff / ファイル履歴）
+  {
+    'sindrets/diffview.nvim',
+    dependencies = { 'nvim-lua/plenary.nvim' },
+    cmd = { 'DiffviewOpen', 'DiffviewClose', 'DiffviewFileHistory' },
+    keys = {
+      { '<leader>gd', '<cmd>DiffviewOpen<CR>', desc = 'Diffview: Open' },
+      { '<leader>gD', '<cmd>DiffviewClose<CR>', desc = 'Diffview: Close' },
+      { '<leader>gh', '<cmd>DiffviewFileHistory %<CR>', desc = 'Diffview: File History' },
+      { '<leader>gH', '<cmd>DiffviewFileHistory<CR>', desc = 'Diffview: Repo History' },
+    },
+    config = function() require 'extensions.diffview' end,
+  },
   -- Flash: 高速ナビゲーション
   {
     'folke/flash.nvim',
