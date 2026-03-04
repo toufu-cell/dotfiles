@@ -80,9 +80,6 @@ vim.api.nvim_create_autocmd('TermOpen', {
     local opts = { buffer = 0, noremap = true }
     vim.keymap.set('t', '<Esc>', [[<C-\><C-n>]], opts)
     vim.keymap.set('t', 'jj', [[<C-\><C-n>]], opts)
-    vim.keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]], opts)
-    vim.keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]], opts)
-    vim.keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]], opts)
-    vim.keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]], opts)
+    -- C-h/j/k/l は vim-tmux-navigator に委譲（init.lua で t モード含めマッピング済み）
   end,
 })

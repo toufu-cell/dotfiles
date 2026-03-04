@@ -127,8 +127,8 @@
     "PreToolUse": [],
     "PostToolUse": []
   },
-  "alwaysThinkingEnabled": false,
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true
-  }
+  },
+  "alwaysThinkingEnabled": false
 }

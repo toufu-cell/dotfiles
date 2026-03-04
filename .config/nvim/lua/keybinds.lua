@@ -7,11 +7,7 @@ vim.keymap.set('n', ';', ':')
 -- Leaderキーをスペースに設定
 vim.g.mapleader = ' '
 
--- ウィンドウ間の移動を簡単に
-vim.keymap.set('n', '<C-h>', '<C-w>h')  -- 左のウィンドウへ
-vim.keymap.set('n', '<C-j>', '<C-w>j')  -- 下のウィンドウへ
-vim.keymap.set('n', '<C-k>', '<C-w>k')  -- 上のウィンドウへ
-vim.keymap.set('n', '<C-l>', '<C-w>l')  -- 右のウィンドウへ
+-- ウィンドウ/ペイン間の移動は vim-tmux-navigator に委譲（extensions/init.lua）
 
 -- ESCの代わりにjjで挿入モードを抜ける
 vim.keymap.set('i', 'jj', '<ESC>')

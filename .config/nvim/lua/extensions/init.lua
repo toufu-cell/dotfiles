@@ -129,6 +129,23 @@ local plugins = {
     },
     config = function() require 'extensions.cmp' end,
   },
+  -- tmux-Neovim シームレスナビゲーション（C-h/j/k/l）
+  {
+    'christoomey/vim-tmux-navigator',
+    event = 'VeryLazy',
+    cmd = {
+      'TmuxNavigateLeft',
+      'TmuxNavigateDown',
+      'TmuxNavigateUp',
+      'TmuxNavigateRight',
+    },
+    keys = {
+      { '<C-h>', '<cmd>TmuxNavigateLeft<CR>', mode = { 'n', 't' }, desc = 'Navigate Left' },
+      { '<C-j>', '<cmd>TmuxNavigateDown<CR>', mode = { 'n', 't' }, desc = 'Navigate Down' },
+      { '<C-k>', '<cmd>TmuxNavigateUp<CR>', mode = { 'n', 't' }, desc = 'Navigate Up' },
+      { '<C-l>', '<cmd>TmuxNavigateRight<CR>', mode = { 'n', 't' }, desc = 'Navigate Right' },
+    },
+  },
   -- Flash: 高速ナビゲーション
   {
     'folke/flash.nvim',
