@@ -66,6 +66,7 @@ exec zsh
 ### Git
 - **GitHub CLI** - エイリアス (`co` = `pr checkout`)
 - **git/ignore** - グローバル gitignore
+- **git/config** - Git安全設定（rerere, pull.ff=only, fetch.prune, merge.conflictstyle=diff3）
 
 ### AI コーディングツール
 - **Claude Code** - グローバル指示 (CLAUDE.md), 権限設定, カスタムコマンド (31個), スキル (8種)

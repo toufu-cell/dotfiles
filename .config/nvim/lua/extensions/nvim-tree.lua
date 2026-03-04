@@ -90,7 +90,7 @@ require('nvim-tree').setup {
   -- フィルター設定
   filters = {
     dotfiles = false, -- 隠しファイルを表示
-    custom = { '.git', 'node_modules', '.cache' }, -- これらのディレクトリを非表示
+    custom = { '^%.git$', 'node_modules', '.cache' }, -- これらのディレクトリを非表示
   },
 
   -- Git統合

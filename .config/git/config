@@ -1,0 +1,11 @@
+[rerere]
+    enabled = true
+
+[pull]
+    ff = only
+
+[fetch]
+    prune = true
+
+[merge]
+    conflictstyle = diff3
