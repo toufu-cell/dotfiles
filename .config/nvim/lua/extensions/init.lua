@@ -239,6 +239,21 @@ local plugins = {
     },
     config = function() require 'extensions.toggleterm' end,
   },
+  -- snacks.nvim: ユーティリティ集（bigfile / notifier / words）
+  {
+    'folke/snacks.nvim',
+    priority = 1000,
+    lazy = false,
+    opts = {
+      bigfile = { enabled = true },
+      notifier = { enabled = true },
+      words = { enabled = true },
+    },
+    keys = {
+      { ']]', function() Snacks.words.jump(vim.v.count1) end, desc = 'Next Reference', mode = { 'n' } },
+      { '[[', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference', mode = { 'n' } },
+    },
+  },
 }
 
 local opts = {
