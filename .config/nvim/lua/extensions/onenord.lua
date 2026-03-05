@@ -23,6 +23,9 @@ require('onenord').setup {
     GitSignsAddLnInline = { fg = colors.none, bg = colors.none, style = 'underline' },
     GitSignsChangeLnInline = { fg = colors.none, bg = colors.none, style = 'underline' },
     GitSignsDeleteLnInline = { fg = colors.none, bg = colors.none, style = 'bold,underline' },
+    -- dropbar.nvim 背景透過対策
+    WinBar = { fg = colors.light_gray, bg = colors.none },
+    WinBarNC = { fg = colors.gray, bg = colors.none },
   },
 
   custom_colors = {

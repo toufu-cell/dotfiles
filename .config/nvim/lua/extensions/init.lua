@@ -254,6 +254,52 @@ local plugins = {
       { '[[', function() Snacks.words.jump(-vim.v.count1) end, desc = 'Prev Reference', mode = { 'n' } },
     },
   },
+  -- インデントガイド + スコープハイライト
+  {
+    'lukas-reineke/indent-blankline.nvim',
+    main = 'ibl',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function() require 'extensions.indent-blankline' end,
+  },
+  -- バッファタブライン（上部にバッファ一覧）
+  {
+    'akinsho/bufferline.nvim',
+    version = '*',
+    event = 'VeryLazy',
+    dependencies = { 'nvim-tree/nvim-web-devicons' },
+    config = function() require 'extensions.bufferline' end,
+  },
+  -- コードアウトライン（関数・クラス一覧のサイドパネル）
+  {
+    'stevearc/aerial.nvim',
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+    keys = {
+      { '<leader>ao', '<cmd>AerialToggle!<CR>', desc = 'Aerial: Toggle outline' },
+      { '<leader>as', '<cmd>Telescope aerial<CR>', desc = 'Aerial: Symbol search' },
+    },
+    config = function() require 'extensions.aerial' end,
+  },
+  -- パンくずナビ（ウィンドウ上部に現在位置を表示）
+  {
+    'Bekaboo/dropbar.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = {
+      'nvim-treesitter/nvim-treesitter',
+      'nvim-tree/nvim-web-devicons',
+    },
+  },
+  -- コマンドラインポップアップ化 + LSP UI 改善
+  {
+    'folke/noice.nvim',
+    event = 'VeryLazy',
+    dependencies = {
+      'MunifTanjim/nui.nvim',
+    },
+    config = function() require 'extensions.noice' end,
+  },
 }
 
 local opts = {

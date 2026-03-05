@@ -17,9 +17,19 @@ vim.keymap.set('i', 'jj', '<ESC>')
 vim.keymap.set('n', '<Leader>w', ':w<CR>')   -- スペース+wで保存
 vim.keymap.set('n', '<Leader>q', ':q<CR>')   -- スペース+qで終了
 
--- バッファ移動
-vim.keymap.set('n', '<Leader>n', ':bnext<CR>')      -- 次のバッファ
-vim.keymap.set('n', '<Leader>p', ':bprevious<CR>')  -- 前のバッファ
+-- バッファ移動（bufferline.nvim 連携）
+vim.keymap.set('n', '<Leader>bn', '<cmd>BufferLineCycleNext<CR>', { desc = 'Next buffer' })
+vim.keymap.set('n', '<Leader>bp', '<cmd>BufferLineCyclePrev<CR>', { desc = 'Previous buffer' })
+vim.keymap.set('n', '<Leader>bd', function()
+    local buf = vim.api.nvim_get_current_buf()
+    vim.cmd('BufferLineCyclePrev')
+    vim.cmd('bdelete ' .. buf)
+end, { desc = 'Close buffer' })
+
+-- noice.nvim キーマップ
+vim.keymap.set('n', '<Leader>nd', '<cmd>Noice dismiss<CR>', { desc = 'Noice: Dismiss messages' })
+vim.keymap.set('n', '<Leader>nl', '<cmd>Noice last<CR>', { desc = 'Noice: Last message' })
+vim.keymap.set('n', '<Leader>nh', '<cmd>Noice history<CR>', { desc = 'Noice: Message history' })
 
 -- :messages の内容をクリップボードにコピー
 vim.keymap.set('n', '<Leader>cm', function()
