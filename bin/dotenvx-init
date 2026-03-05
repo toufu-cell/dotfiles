@@ -1,0 +1,60 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+PROJECT_NAME="${1:?Usage: dotenvx-init <project-name> [vault-name]}"
+VAULT_NAME="${2:-Personal}"
+OP_ITEM_TITLE="dotenvx ${PROJECT_NAME}"
+
+echo "=== dotenvx + 1Password Setup for '${PROJECT_NAME}' ==="
+
+# Step 1: 暗号化
+[[ -f .env ]] || touch .env
+echo "Encrypting .env..."
+dotenvx encrypt
+
+# Step 2: 鍵を 1Password に保存
+[[ -f .env.keys ]] || { echo "Error: .env.keys not found"; exit 1; }
+PRIVATE_KEY=$(grep '^DOTENV_PRIVATE_KEY=' .env.keys | cut -d'=' -f2- | tr -d '"')
+[[ -n "${PRIVATE_KEY}" ]] || { echo "Error: Could not extract key"; exit 1; }
+
+echo "Storing key in 1Password (vault: ${VAULT_NAME})..."
+# フィールド代入で Secure Note を作成
+# 注意: 鍵がプロセス引数に一時的に現れるが、ローカルマシン上のみの操作
+if ! op item create \
+    --vault "${VAULT_NAME}" \
+    --category "Secure Note" \
+    --title "${OP_ITEM_TITLE}" \
+    "DOTENV_PRIVATE_KEY[password]=${PRIVATE_KEY}"; then
+    echo "Error: Failed to store key in 1Password."
+    echo ".env.keys is preserved for manual recovery."
+    exit 1
+fi
+
+# Step 3: 1Password 保存成功後のみ .env.keys を削除
+echo "Removing .env.keys..."
+rm -f .env.keys
+
+# Step 4: .envrc を生成
+OP_REF="op://${VAULT_NAME}/${OP_ITEM_TITLE}/DOTENV_PRIVATE_KEY"
+cat > .envrc << EOF
+use dotenvx "${OP_REF}"
+EOF
+
+echo "Allowing direnv..."
+direnv allow
+
+# Step 5: .gitignore に安全ネットを追加
+if [[ -f .gitignore ]]; then
+    grep -qF '.env.keys' .gitignore || echo '.env.keys' >> .gitignore
+else
+    echo '.env.keys' > .gitignore
+fi
+
+echo ""
+echo "=== Setup Complete ==="
+echo "  .env     : encrypted (safe to commit)"
+echo "  .envrc   : uses 1Password for key retrieval"
+echo "  .env.keys: deleted (stored in 1Password)"
+echo ""
+echo "To add secrets:"
+echo "  DOTENV_PRIVATE_KEY=\$(op read '${OP_REF}') dotenvx set KEY value"

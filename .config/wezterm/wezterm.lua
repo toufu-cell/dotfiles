@@ -258,7 +258,7 @@ config.tab_max_width = 28
 -- window size / decorations
 config.initial_cols = 140
 config.initial_rows = 38
-config.window_decorations = 'RESIZE'
+config.window_decorations = 'INTEGRATED_BUTTONS|RESIZE'
 
 -- GPU rendering (uncomment to try WebGpu, fallback to OpenGL if laggy)
 -- config.front_end = 'WebGpu'

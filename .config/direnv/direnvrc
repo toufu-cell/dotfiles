@@ -1,0 +1,55 @@
+# dotenvx + 1Password CLI 連携
+# 暗号化された .env を 1Password の鍵で復号し、環境変数にセットする
+use_dotenvx() {
+    local op_ref="${1:?Error: 1Password reference URI required (e.g., op://vault/item/field)}"
+    local env_file="${2:-.env}"
+
+    has dotenvx || { log_error "dotenvx is not installed. Run: brew install dotenvx/brew/dotenvx"; return 1; }
+    has op      || { log_error "1Password CLI is not installed. Run: brew install --cask 1password-cli"; return 1; }
+    [[ -f "${env_file}" ]] || { log_error "Encrypted env file not found: ${env_file}"; return 1; }
+
+    watch_file "${env_file}"
+
+    # 1Password から DOTENV_PRIVATE_KEY を取得（stderr は分離）
+    local private_key op_stderr
+    op_stderr="$(mktemp)"
+    private_key="$(op read "${op_ref}" 2>"${op_stderr}")" || {
+        log_error "Failed to read key from 1Password: ${op_ref}"
+        log_error "$(cat "${op_stderr}")"
+        rm -f "${op_stderr}"
+        return 1
+    }
+    rm -f "${op_stderr}"
+
+    # dotenvx decrypt --stdout で復号（結果を変数に格納、ディスク書き込みなし）
+    local decrypted dotenvx_stderr
+    dotenvx_stderr="$(mktemp)"
+    decrypted="$(DOTENV_PRIVATE_KEY="${private_key}" dotenvx decrypt --stdout -f "${env_file}" 2>"${dotenvx_stderr}")" || {
+        log_error "dotenvx decrypt failed for ${env_file}"
+        log_error "$(cat "${dotenvx_stderr}")"
+        rm -f "${dotenvx_stderr}"
+        return 1
+    }
+    rm -f "${dotenvx_stderr}"
+
+    # .env 形式を1行ずつパースして export
+    local line key value
+    while IFS= read -r line; do
+        # コメント行・空行・DOTENV_PUBLIC_KEY をスキップ
+        case "${line}" in
+            '#'*|'') continue ;;
+            DOTENV_PUBLIC_KEY=*) continue ;;
+        esac
+        # KEY=value の分離
+        key="${line%%=*}"
+        value="${line#*=}"
+        # クォート除去（先頭と末尾の " または '）
+        value="${value#\"}"
+        value="${value%\"}"
+        value="${value#\'}"
+        value="${value%\'}"
+        export "${key}=${value}"
+    done <<< "${decrypted}"
+
+    log_status "dotenvx: loaded ${env_file}"
+}
