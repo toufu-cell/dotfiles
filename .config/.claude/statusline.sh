@@ -1,9 +1,62 @@
 #!/bin/bash
 # Claude Code statusline script
 # Displays: model | context bar | +/-lines | git branch
-#           cost | duration | API time | tokens
+#           cost | duration | API time | tokens | rate limit
 
 input=$(cat)
+
+# --- Rate limit usage (cached, macOS only) ---
+USAGE_CACHE="/tmp/claude-statusline-usage-${UID}.json"
+USAGE_CACHE_TTL=60
+
+fetch_usage() {
+    local creds token tmpfile
+    creds=$(security find-generic-password -s "Claude Code-credentials" -w 2>/dev/null) || return 1
+    token=$(echo "$creds" | jq -r '.claudeAiOauth.accessToken // empty' 2>/dev/null) || return 1
+    [ -z "$token" ] && return 1
+    tmpfile=$(mktemp "${USAGE_CACHE}.XXXXXX") || return 1
+    if curl -s --max-time 3 "https://api.anthropic.com/api/oauth/usage" \
+        -H "Authorization: Bearer $token" \
+        -H "anthropic-beta: oauth-2025-04-20" \
+        -H "Content-Type: application/json" \
+        -o "$tmpfile" 2>/dev/null \
+        && jq -e '.five_hour' "$tmpfile" >/dev/null 2>&1; then
+        mv -f "$tmpfile" "$USAGE_CACHE"
+    else
+        rm -f "$tmpfile"
+        return 1
+    fi
+}
+
+# Only fetch on macOS, and only if cache is stale or missing
+if [ "$(uname)" = "Darwin" ]; then
+    if [ ! -f "$USAGE_CACHE" ]; then
+        fetch_usage 2>/dev/null
+    else
+        cache_mod=$(stat -f%m "$USAGE_CACHE" 2>/dev/null || echo 0)
+        now=$(date +%s)
+        if [ $((now - cache_mod)) -gt $USAGE_CACHE_TTL ]; then
+            fetch_usage 2>/dev/null
+        fi
+    fi
+fi
+
+# Read cached usage data
+if [ -f "$USAGE_CACHE" ]; then
+    RL_5H=$(jq -r '.five_hour.utilization // empty' "$USAGE_CACHE" 2>/dev/null)
+    RL_7D=$(jq -r '.seven_day.utilization // empty' "$USAGE_CACHE" 2>/dev/null)
+fi
+RL_5H="${RL_5H:-?}"
+RL_7D="${RL_7D:-?}"
+
+# Format utilization (round to integer if numeric)
+fmt_rl() {
+    local v=$1
+    if [ "$v" = "?" ]; then echo "?"; return; fi
+    printf '%.0f' "$v" 2>/dev/null || echo "?"
+}
+RL_5H=$(fmt_rl "$RL_5H")
+RL_7D=$(fmt_rl "$RL_7D")
 
 # Extract all fields in one jq call
 eval "$(echo "$input" | jq -r '
@@ -94,6 +147,23 @@ LINE2="${GRAY}${COST_FMT}${RESET}"
 LINE2="${LINE2}${SEP}${GRAY}$(fmt_dur "$DURATION_MS")${RESET}"
 LINE2="${LINE2}${SEP}${GRAY}API $(fmt_dur "$API_MS")${RESET}"
 LINE2="${LINE2}${SEP}${GRAY}In:$(fmt_tok "$IN_TOK") Out:$(fmt_tok "$OUT_TOK") Cache:$(fmt_tok "$CACHE_TOK")${RESET}"
+
+# Rate limit color (red if >=80%, yellow if >=50%)
+rl_color() {
+    local v=$1
+    if [ "$v" = "?" ]; then echo "$GRAY"; return; fi
+    if [ "$v" -ge 80 ] 2>/dev/null; then echo "$RED"
+    elif [ "$v" -ge 50 ] 2>/dev/null; then echo "$YELLOW"
+    else echo "$GREEN"; fi
+}
+RL5_COLOR=$(rl_color "$RL_5H")
+RL7_COLOR=$(rl_color "$RL_7D")
+# Format rate limit display (omit % suffix for '?' values)
+fmt_rl_display() {
+    local v=$1
+    if [ "$v" = "?" ]; then echo "?"; else echo "${v}%"; fi
+}
+LINE2="${LINE2}${SEP}${GRAY}RL${RESET} ${RL5_COLOR}5h:$(fmt_rl_display "$RL_5H")${RESET} ${RL7_COLOR}7d:$(fmt_rl_display "$RL_7D")${RESET}"
 
 echo -e "$LINE1"
 echo -e "$LINE2"
