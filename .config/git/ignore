@@ -1,3 +1,4 @@
 **/.claude/settings.local.json
+**/.claude/mcp-needs-auth-cache.json
+**/.codex/config.toml
 .env.keys
-.codex/config.toml
