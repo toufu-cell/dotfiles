@@ -250,6 +250,21 @@ status: draft
 
 ---
 
+## Phase 3.5: 自動アーカイブ
+
+保存完了後、7日超前の古いニュースファイルをアーカイブに移動する。
+
+```bash
+bash ~/.claude/skills/news-common/bin/archive-news.sh
+```
+
+- 対象: `$VAULT/ニュース/` 直下の `*-tech-trends.md`, `*-stock-news.md`, `*-stock-analysis.md`
+- 移動先: `$VAULT/ニュース/archive/YYYY/MM/`
+- 基準: ファイル名先頭の日付が7日超前のもの（JST基準）
+- スクリプトの出力（アーカイブ件数）を Phase 4 の完了報告に含める
+
+---
+
 ## Phase 4: 完了報告
 
 保存完了後、ユーザーに以下を報告する:
