@@ -31,8 +31,21 @@ vim.keymap.set('n', '<Leader>nd', '<cmd>Noice dismiss<CR>', { desc = 'Noice: Dis
 vim.keymap.set('n', '<Leader>nl', '<cmd>Noice last<CR>', { desc = 'Noice: Last message' })
 vim.keymap.set('n', '<Leader>nh', '<cmd>Noice history<CR>', { desc = 'Noice: Message history' })
 
--- :messages の内容をクリップボードにコピー
+-- :messages の内容をクリップボードにコピー（noice.nvim 対応）
 vim.keymap.set('n', '<Leader>cm', function()
+    local has_noice, manager = pcall(require, 'noice.message.manager')
+    if has_noice then
+        local config = require('noice.config')
+        local filter = config.options.commands.history.filter
+        local messages = manager.get(filter, { history = true, sort = true })
+        local lines = {}
+        for _, msg in ipairs(messages) do
+            table.insert(lines, msg:content())
+        end
+        vim.fn.setreg('+', table.concat(lines, '\n'))
+        vim.notify('Noice history copied to clipboard', vim.log.levels.INFO)
+        return
+    end
     local ok, result = pcall(vim.api.nvim_exec2, 'messages', { output = true })
     if ok then
         vim.fn.setreg('+', result.output)
@@ -40,4 +53,4 @@ vim.keymap.set('n', '<Leader>cm', function()
     else
         vim.notify('Failed to copy messages', vim.log.levels.ERROR)
     end
-end, { desc = 'Copy :messages to clipboard', silent = true })
+end, { desc = 'Copy messages to clipboard', silent = true })

@@ -111,11 +111,26 @@ fi
 alias ls='ls -F -G'
 alias vim='nvim'
 
+# eza (インストールされている場合のみ)
+if command -v eza &> /dev/null; then
+    alias e='eza --group-directories-first'
+    alias eg='eza -l --git --group-directories-first'
+    alias et='eza --tree --level=2 --group-directories-first'
+    alias ei='eza --icons --group-directories-first'
+fi
+
 # abbr (zsh-abbrがインストールされている場合のみ)
 if command -v abbr &> /dev/null; then
   abbr -S ll='ls -l' >>/dev/null 2>&1
   abbr -S la='ls -A' >>/dev/null 2>&1
   abbr -S lla='ls -l -A' >>/dev/null 2>&1
+
+  if command -v eza &> /dev/null; then
+    abbr -S el='e -l' >>/dev/null 2>&1
+    abbr -S ea='e -a' >>/dev/null 2>&1
+    abbr -S ela='e -l -a' >>/dev/null 2>&1
+  fi
+
   abbr -S v='vim' >>/dev/null 2>&1
   abbr -S g='git' >>/dev/null 2>&1
   abbr -S gst='git status' >>/dev/null 2>&1

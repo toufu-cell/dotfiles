@@ -127,12 +127,12 @@
     "PreToolUse": [],
     "PostToolUse": []
   },
-  "enabledPlugins": {
-    "superpowers@superpowers-marketplace": true
-  },
-  "alwaysThinkingEnabled": false,
   "statusLine": {
     "type": "command",
     "command": "~/.claude/statusline.sh"
-  }
+  },
+  "enabledPlugins": {
+    "superpowers@superpowers-marketplace": true
+  },
+  "alwaysThinkingEnabled": false
 }
