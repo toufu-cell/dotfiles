@@ -14,8 +14,14 @@ vim.keymap.set('i', 'jj', '<ESC>')
 
 
 -- 保存と終了のショートカット
-vim.keymap.set('n', '<Leader>w', ':w<CR>')   -- スペース+wで保存
-vim.keymap.set('n', '<Leader>q', ':q<CR>')   -- スペース+qで終了
+vim.keymap.set('n', '<Leader>w', function()
+    if vim.bo.buftype == '' then
+        vim.cmd('write')
+    else
+        vim.notify('Cannot save: special buffer', vim.log.levels.WARN)
+    end
+end, { desc = 'Save' })
+vim.keymap.set('n', '<Leader>q', ':q<CR>', { desc = 'Quit' })
 
 -- バッファ移動（bufferline.nvim 連携）
 vim.keymap.set('n', '<Leader>bn', '<cmd>BufferLineCycleNext<CR>', { desc = 'Next buffer' })
