@@ -20,22 +20,54 @@ require('nvim-tree').setup {
     vim.bo[bufnr].swapfile = false
     vim.bo[bufnr].bufhidden = 'wipe'
 
+    -- nvim-treeから開いたバッファを追跡するテーブル（set形式）
+    _G.nvim_tree_opened_bufs = _G.nvim_tree_opened_bufs or {}
+
+    -- ファイルを開く操作をラップし、開いたバッファを追跡する
+    local function track_open(open_fn)
+      return function()
+        local node = api.tree.get_node_under_cursor()
+        if not node or (node.type ~= 'file' and node.type ~= 'link') then
+          open_fn()
+          return
+        end
+        -- open前のウィンドウ数を記録（picker キャンセル検出用）
+        local wins_before = vim.api.nvim_list_wins()
+        local cur_win = vim.api.nvim_get_current_win()
+        local cur_buf = vim.api.nvim_win_get_buf(cur_win)
+        open_fn()
+        -- open後にウィンドウやバッファが変わっていなければpickerキャンセルと判断
+        local new_win = vim.api.nvim_get_current_win()
+        local new_buf = vim.api.nvim_win_get_buf(new_win)
+        local wins_after = vim.api.nvim_list_wins()
+        if new_win == cur_win and new_buf == cur_buf and #wins_after == #wins_before then
+          return
+        end
+        -- pathを解決（symlinkの場合はlink_toを使用）
+        local path = node.link_to or node.absolute_path
+        local opened_bufnr = vim.fn.bufnr(path)
+        if opened_bufnr ~= -1 and vim.api.nvim_buf_is_loaded(opened_bufnr) then
+          _G.nvim_tree_opened_bufs[opened_bufnr] = true
+        end
+      end
+    end
+
     -- デフォルトのキーマップを設定
     local function opts(desc)
       return { desc = 'nvim-tree: ' .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
     end
 
-    -- ファイル/フォルダを開く・展開/折りたたむ
-    vim.keymap.set('n', '<CR>', api.node.open.edit, opts('Open'))
-    vim.keymap.set('n', 'o', api.node.open.edit, opts('Open'))
-    vim.keymap.set('n', '<2-LeftMouse>', api.node.open.edit, opts('Open'))
+    -- ファイル/フォルダを開く・展開/折りたたむ（追跡付き）
+    vim.keymap.set('n', '<CR>', track_open(api.node.open.edit), opts('Open'))
+    vim.keymap.set('n', 'o', track_open(api.node.open.edit), opts('Open'))
+    vim.keymap.set('n', '<2-LeftMouse>', track_open(api.node.open.edit), opts('Open'))
 
-    -- 分割して開く
-    vim.keymap.set('n', '<C-v>', api.node.open.vertical, opts('Open: Vertical Split'))
-    vim.keymap.set('n', '<C-x>', api.node.open.horizontal, opts('Open: Horizontal Split'))
-    vim.keymap.set('n', '<C-t>', api.node.open.tab, opts('Open: New Tab'))
+    -- 分割して開く（追跡付き）
+    vim.keymap.set('n', '<C-v>', track_open(api.node.open.vertical), opts('Open: Vertical Split'))
+    vim.keymap.set('n', '<C-x>', track_open(api.node.open.horizontal), opts('Open: Horizontal Split'))
+    vim.keymap.set('n', '<C-t>', track_open(api.node.open.tab), opts('Open: New Tab'))
 
-    -- プレビュー
+    -- プレビュー（追跡対象外: フォーカスがtreeに戻るため）
     vim.keymap.set('n', '<Tab>', api.node.open.preview, opts('Open Preview'))
 
     -- ファイル操作

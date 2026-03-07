@@ -26,6 +26,24 @@ vim.keymap.set('n', '<Leader>bd', function()
     vim.cmd('bdelete ' .. buf)
 end, { desc = 'Close buffer' })
 
+-- nvim-treeから開いたバッファを一括で閉じる
+vim.keymap.set('n', '<Leader>ba', function()
+    local bufs = _G.nvim_tree_opened_bufs or {}
+    local closed = 0
+    for bufnr, _ in pairs(bufs) do
+        if vim.api.nvim_buf_is_valid(bufnr) then
+            local ok = pcall(vim.api.nvim_buf_delete, bufnr, {})
+            if ok then
+                bufs[bufnr] = nil
+                closed = closed + 1
+            end
+        else
+            bufs[bufnr] = nil
+        end
+    end
+    vim.notify('Closed ' .. closed .. ' nvim-tree buffer(s)', vim.log.levels.INFO)
+end, { desc = 'Close all nvim-tree opened buffers' })
+
 -- noice.nvim キーマップ
 vim.keymap.set('n', '<Leader>nd', '<cmd>Noice dismiss<CR>', { desc = 'Noice: Dismiss messages' })
 vim.keymap.set('n', '<Leader>nl', '<cmd>Noice last<CR>', { desc = 'Noice: Last message' })
