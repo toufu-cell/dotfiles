@@ -41,7 +41,7 @@ vim.keymap.set('n', '<F10>', dap.step_over, { desc = 'DAP: Step Over' })
 vim.keymap.set('n', '<F11>', dap.step_into, { desc = 'DAP: Step Into' })
 
 -- デバッグ操作（<leader>D プレフィックス）
--- ※ <leader>d は LSP 診断表示に使用中のため、DAP は大文字 D で分離
+-- ※ <leader>ld は LSP 診断表示に使用中のため、DAP は大文字 D で分離
 vim.keymap.set('n', '<leader>Dc', dap.continue, { desc = 'DAP: Continue' })
 vim.keymap.set('n', '<leader>Dn', dap.step_over, { desc = 'DAP: Step Over' })
 vim.keymap.set('n', '<leader>Di', dap.step_into, { desc = 'DAP: Step Into' })

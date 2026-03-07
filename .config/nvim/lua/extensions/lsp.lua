@@ -22,16 +22,16 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, opts)
   -- 参照箇所を表示
   vim.keymap.set('n', 'gr', vim.lsp.buf.references, opts)
-  -- シンボルをリネーム
-  vim.keymap.set('n', '<leader>rn', vim.lsp.buf.rename, opts)
-  -- コードアクション
-  vim.keymap.set('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  -- フォーマット
-  vim.keymap.set('n', '<leader>f', function()
+  -- LSP: シンボルをリネーム
+  vim.keymap.set('n', '<leader>lr', vim.lsp.buf.rename, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Rename' })
+  -- LSP: コードアクション
+  vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Code Action' })
+  -- LSP: フォーマット
+  vim.keymap.set('n', '<leader>lf', function()
     vim.lsp.buf.format { async = true }
-  end, opts)
-  -- 診断（エラー・警告）を表示
-  vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float, opts)
+  end, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Format' })
+  -- LSP: 診断（エラー・警告）を表示
+  vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Diagnostics' })
   -- 前の診断へ移動
   vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
   -- 次の診断へ移動

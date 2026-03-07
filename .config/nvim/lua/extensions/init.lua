@@ -68,7 +68,10 @@ local plugins = {
   {
     'nvim-telescope/telescope.nvim',
     keys = {
-      '<leader>ff', '<leader>fg', '<leader>fb', '<leader>fh'
+      { '<leader>ff', desc = 'Find: Files' },
+      { '<leader>fg', desc = 'Find: Grep' },
+      { '<leader>fb', desc = 'Find: Buffers' },
+      { '<leader>fh', desc = 'Find: Help' },
     },
     tag = '0.1.4',
     config = function() require 'extensions.telescope' end,
@@ -289,6 +292,25 @@ local plugins = {
     dependencies = {
       'nvim-treesitter/nvim-treesitter',
       'nvim-tree/nvim-web-devicons',
+    },
+  },
+  -- キーバインドチートシート（Leader 押下でポップアップ表示）
+  {
+    'folke/which-key.nvim',
+    event = 'VeryLazy',
+    opts = {
+      spec = {
+        { '<leader>b', group = 'Buffer' },
+        { '<leader>f', group = 'Find' },
+        { '<leader>l', group = 'LSP' },
+        { '<leader>t', group = 'Terminal' },
+        { '<leader>D', group = 'DAP' },
+        { '<leader>g', group = 'Git' },
+        { '<leader>n', group = 'Noice' },
+        { '<leader>a', group = 'Aerial' },
+        { '<leader>e', group = 'Explorer' },
+        { '<leader>c', group = 'Copy' },
+      },
     },
   },
   -- コマンドラインポップアップ化 + LSP UI 改善
