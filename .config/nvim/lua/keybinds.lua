@@ -1,8 +1,9 @@
 -- keybinds.lua
 -- Neovimキーバインド設定
 
--- Normalモードで ; を : として使う（コマンド入力を簡単に）
+-- Normalモードで ; と : をスワップ（コマンド入力を楽にしつつ、元の ; も使えるようにする）
 vim.keymap.set('n', ';', ':')
+vim.keymap.set('n', ':', ';')
 
 -- Leaderキーをスペースに設定
 vim.g.mapleader = ' '
