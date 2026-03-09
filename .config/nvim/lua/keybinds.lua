@@ -93,3 +93,12 @@ vim.keymap.set('n', '<Leader>cm', function()
         vim.notify('Failed to copy messages', vim.log.levels.ERROR)
     end
 end, { desc = 'Copy messages to clipboard', silent = true })
+
+-- kensaku-search: / と ? のときだけローマ字→日本語変換を適用
+vim.keymap.set('c', '<CR>', function()
+    local cmdtype = vim.fn.getcmdtype()
+    if cmdtype == '/' or cmdtype == '?' then
+        return '<Plug>(kensaku-search-replace)<CR>'
+    end
+    return '<CR>'
+end, { expr = true })

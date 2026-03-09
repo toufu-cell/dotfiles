@@ -72,6 +72,7 @@ local plugins = {
       { '<leader>fg', desc = 'Find: Grep' },
       { '<leader>fb', desc = 'Find: Buffers' },
       { '<leader>fh', desc = 'Find: Help' },
+      { '<leader>fk', desc = 'Find: Kensaku (日本語検索)' },
     },
     tag = '0.1.4',
     config = function() require 'extensions.telescope' end,
@@ -79,7 +80,25 @@ local plugins = {
       'nvim-lua/plenary.nvim',
       'nvim-tree/nvim-web-devicons',
       { 'nvim-telescope/telescope-fzf-native.nvim', build = 'make' },
+      { 'Allianaab2m/telescope-kensaku.nvim', dependencies = { 'lambdalisue/kensaku.vim' } },
     },
+  },
+  -- Denops（Deno ベースのプラグインフレームワーク）
+  {
+    'vim-denops/denops.vim',
+    event = 'VeryLazy',
+  },
+  -- 日本語ローマ字検索エンジン
+  {
+    'lambdalisue/kensaku.vim',
+    event = 'VeryLazy',
+    dependencies = { 'vim-denops/denops.vim' },
+  },
+  -- kensaku で / 検索を日本語対応
+  {
+    'lambdalisue/kensaku-search.vim',
+    event = 'CmdlineEnter',
+    dependencies = { 'lambdalisue/kensaku.vim' },
   },
   -- ファイルエクスプローラー
   {

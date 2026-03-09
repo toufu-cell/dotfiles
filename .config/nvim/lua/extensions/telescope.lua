@@ -29,6 +29,7 @@ telescope.setup {
 }
 
 telescope.load_extension 'fzf'
+telescope.load_extension 'kensaku'
 
 local builtin = require 'telescope.builtin'
 
@@ -37,3 +38,4 @@ vim.keymap.set('n', '<leader>ff', builtin.find_files, { desc = 'Telescope find f
 vim.keymap.set('n', '<leader>fg', builtin.live_grep, { desc = 'Telescope live grep' })
 vim.keymap.set('n', '<leader>fb', builtin.buffers, { desc = 'Telescope buffers' })
 vim.keymap.set('n', '<leader>fh', builtin.help_tags, { desc = 'Telescope help tags' })
+vim.keymap.set('n', '<leader>fk', telescope.extensions.kensaku.kensaku, { desc = 'Telescope kensaku (日本語検索)' })
