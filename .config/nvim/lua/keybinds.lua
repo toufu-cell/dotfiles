@@ -13,6 +13,20 @@ vim.g.mapleader = ' '
 -- ESCの代わりにjjで挿入モードを抜ける
 vim.keymap.set('i', 'jj', '<ESC>')
 
+-- j/k を表示行移動にし、カウント付きの場合はジャンプリストに保存
+-- @see https://eiji.page/blog/neovim-remeber-jump-jk/
+vim.keymap.set({ 'n', 'x' }, 'j', function()
+    if vim.v.count > 0 or #vim.fn.reg_recording() > 0 or #vim.fn.reg_executing() > 0 then
+        return "m'" .. vim.v.count .. 'j'
+    end
+    return 'gj'
+end, { expr = true })
+vim.keymap.set({ 'n', 'x' }, 'k', function()
+    if vim.v.count > 0 or #vim.fn.reg_recording() > 0 or #vim.fn.reg_executing() > 0 then
+        return "m'" .. vim.v.count .. 'k'
+    end
+    return 'gk'
+end, { expr = true })
 
 -- 保存と終了のショートカット
 vim.keymap.set('n', '<Leader>w', function()
