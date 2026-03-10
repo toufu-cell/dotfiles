@@ -28,7 +28,7 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<leader>la', vim.lsp.buf.code_action, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Code Action' })
   -- LSP: フォーマット
   vim.keymap.set('n', '<leader>lf', function()
-    vim.lsp.buf.format { async = true }
+    require('conform').format { async = true, lsp_fallback = true }
   end, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Format' })
   -- LSP: 診断（エラー・警告）を表示
   vim.keymap.set('n', '<leader>ld', vim.diagnostic.open_float, { buffer = bufnr, noremap = true, silent = true, desc = 'LSP: Diagnostics' })

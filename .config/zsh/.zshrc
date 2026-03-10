@@ -33,14 +33,9 @@ if [ -f $HOME/.local/bin/antigen.zsh ]; then
     zsh-users/zsh-autosuggestions
     # Extra zsh completions
     zsh-users/zsh-completions
-    # z
-    rupa/z z.sh
     # abbr
     olets/zsh-abbr@main
 EOBUNDLES
-
-  # Load the theme
-  antigen theme robbyrussell
 
   # Tell antigen that you're done
   antigen apply
@@ -92,6 +87,14 @@ if command -v mise &> /dev/null; then
   eval "$(mise activate zsh)"
 fi
 
+# fzf
+if command -v fzf &> /dev/null; then
+  source <(fzf --zsh)
+  export FZF_DEFAULT_COMMAND='fd --type f --hidden --follow --exclude .git'
+  export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+  export FZF_ALT_C_COMMAND='fd --type d --hidden --follow --exclude .git'
+fi
+
 # atuin
 if command -v atuin &> /dev/null; then
   eval "$(atuin init zsh --disable-up-arrow)"
@@ -100,6 +103,11 @@ fi
 # direnv
 if command -v direnv &> /dev/null; then
   eval "$(direnv hook zsh)"
+fi
+
+# zoxide
+if command -v zoxide &> /dev/null; then
+  eval "$(zoxide init zsh)"
 fi
 
 # starship
@@ -117,6 +125,13 @@ if command -v eza &> /dev/null; then
     alias eg='eza -l --git --group-directories-first'
     alias et='eza --tree --level=2 --group-directories-first'
     alias ei='eza --icons --group-directories-first'
+fi
+
+# bat (インストールされている場合のみ)
+if command -v bat &> /dev/null; then
+  export BAT_THEME='Nord'
+  export MANPAGER="sh -c 'col -bx | bat -l man -p'"
+  alias cat='bat --paging=never --style=plain'
 fi
 
 # abbr (zsh-abbrがインストールされている場合のみ)
@@ -151,7 +166,6 @@ export PATH="$HOME/.cargo/bin:$PATH"
 # Added by LM Studio CLI (lms)
 export PATH="$PATH:$HOME/.lmstudio/bin"
 export PATH="$PATH:$HOME/flutter/bin"
-export PATH="$HOME/.local/bin:$PATH"
 
 # Added by Antigravity
 export PATH="$HOME/.antigravity/antigravity/bin:$PATH"

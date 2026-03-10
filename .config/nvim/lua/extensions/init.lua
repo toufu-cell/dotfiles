@@ -120,6 +120,27 @@ local plugins = {
       require('mason').setup()
     end,
   },
+  -- Mason: formatter / linter インストーラー
+  {
+    'WhoIsSethDaniel/mason-tool-installer.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    dependencies = {
+      'williamboman/mason.nvim',
+    },
+    config = function()
+      require('mason-tool-installer').setup({
+        ensure_installed = {
+          'stylua',
+          'prettierd',
+          'shfmt',
+          'ruff',
+          'eslint_d',
+          'shellcheck',
+        },
+        run_on_start = true,
+      })
+    end,
+  },
   -- LSP: masonとlspconfigの橋渡し
   {
     'williamboman/mason-lspconfig.nvim',
@@ -150,6 +171,18 @@ local plugins = {
       'saadparwaiz1/cmp_luasnip',  -- スニペットソース
     },
     config = function() require 'extensions.cmp' end,
+  },
+  -- Formatter
+  {
+    'stevearc/conform.nvim',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function() require 'extensions.conform' end,
+  },
+  -- Linter
+  {
+    'mfussenegger/nvim-lint',
+    event = { 'BufReadPre', 'BufNewFile' },
+    config = function() require 'extensions.lint' end,
   },
   -- tmux-Neovim シームレスナビゲーション（C-h/j/k/l）
   {
