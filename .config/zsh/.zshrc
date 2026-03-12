@@ -184,3 +184,10 @@ case ":$PATH:" in
   *) export PATH="$PNPM_HOME:$PATH" ;;
 esac
 # pnpm end
+
+# Final PATH normalization.
+# Some startup hooks mutate PATH after .zshenv runs; keep user-local CLIs reachable.
+case ":$PATH:" in
+  *":$HOME/.local/bin:"*) ;;
+  *) export PATH="$HOME/.local/bin:$PATH" ;;
+esac

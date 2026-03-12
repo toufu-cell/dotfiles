@@ -80,6 +80,7 @@
       "Bash(basename *)",
       "Bash(VAULT=*)",
       "Bash(RECIPE_DIR=*)",
+      "Bash(DATE=*)",
       "Skill(*)"
     ],
     "defaultMode": "default"
