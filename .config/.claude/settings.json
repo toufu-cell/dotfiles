@@ -12,6 +12,7 @@
       "Edit",
       "Write",
       "Bash(bash ~/.claude/skills/tmux-agent/bin/*)",
+      "Bash(bash ~/.claude/skills/trend-news/bin/*)",
       "Bash(tee /tmp/*)",
       "WebFetch",
       "WebSearch",
@@ -135,5 +136,8 @@
   "enabledPlugins": {
     "superpowers@superpowers-marketplace": true
   },
-  "alwaysThinkingEnabled": false
+  "alwaysThinkingEnabled": false,
+  "effortLevel": "high",
+  "voiceEnabled": true,
+  "skipDangerousModePermissionPrompt": true
 }

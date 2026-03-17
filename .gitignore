@@ -38,6 +38,7 @@
 
 # Claude Code - personal settings and cache
 .config/.claude/settings.local.json
+.config/.claude/sessions/
 .config/.claude/backups/
 .config/.claude/cache/
 .config/.claude/debug/
@@ -69,6 +70,7 @@
 .config/.codex/tmp/
 .config/.codex/shell_snapshots/
 .config/.codex/state_*.sqlite*
+.config/.codex/logs*.sqlite*
 .config/.codex/.DS_Store
 
 # Codex CLI - ntfy.sh credentials (keep notify.sh only)
@@ -88,6 +90,9 @@
 .config/.claude/skills/remotion-best-practices
 
 # Claude Code - 株系スキル（未使用）
+# tmux - plugins (managed by tpm)
+.config/tmux/plugins/
+
 .config/.claude/skills/jp-stock-analysis/
 .config/.claude/skills/jp-stock-news/
 .config/.claude/skills/jp-stock-common/
