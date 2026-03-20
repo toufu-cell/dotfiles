@@ -91,13 +91,26 @@ else
     BAR_COLOR="$GREEN"
 fi
 
-# Progress bar (10 segments)
+# Braille Dots progress bar
+# Each block is ⣿ (filled) or ⠶ (empty), with color based on usage
+braille_bar() {
+    local pct=$1 width=$2 color=$3 dim=$4
+    local filled=$((pct * width / 100))
+    local empty=$((width - filled))
+    local bar=""
+    local i
+    for ((i=0; i<filled; i++)); do
+        bar="${bar}${color}⣿${RESET}"
+    done
+    for ((i=0; i<empty; i++)); do
+        bar="${bar}${dim}⣿${RESET}"
+    done
+    echo "$bar"
+}
+
+DIM='\033[38;2;55;65;68m'   # dim dots for empty segments
 BAR_WIDTH=10
-FILLED=$((PCT * BAR_WIDTH / 100))
-EMPTY=$((BAR_WIDTH - FILLED))
-BAR=""
-[ "$FILLED" -gt 0 ] && BAR=$(printf "%${FILLED}s" | tr ' ' '▰')
-[ "$EMPTY" -gt 0 ] && BAR="${BAR}$(printf "%${EMPTY}s" | tr ' ' '▱')"
+BAR=$(braille_bar "$PCT" "$BAR_WIDTH" "$BAR_COLOR" "$DIM")
 
 # Git branch (use worktree.branch if available, otherwise run git)
 BRANCH="$WT_BRANCH"
@@ -134,7 +147,7 @@ SEP="${GRAY} │ ${RESET}"
 
 # Line 1: model | context bar % | +/-lines | branch
 LINE1="${BAR_COLOR}${MODEL}${RESET}"
-LINE1="${LINE1}${SEP}${BAR_COLOR}${BAR} ${PCT}%${RESET}"
+LINE1="${LINE1}${SEP}${GRAY}ctx${RESET} ${BAR} ${BAR_COLOR}${PCT}%${RESET}"
 LINE1="${LINE1}${SEP}${GREEN}+${LINES_ADD}${RESET}${GRAY}/${RESET}${RED}-${LINES_DEL}${RESET}"
 if [ -n "$BRANCH" ]; then
     LINE1="${LINE1}${SEP}${GRAY}${BRANCH}${RESET}"
@@ -158,12 +171,25 @@ rl_color() {
 }
 RL5_COLOR=$(rl_color "$RL_5H")
 RL7_COLOR=$(rl_color "$RL_7D")
-# Format rate limit display (omit % suffix for '?' values)
-fmt_rl_display() {
-    local v=$1
-    if [ "$v" = "?" ]; then echo "?"; else echo "${v}%"; fi
-}
-LINE2="${LINE2}${SEP}${GRAY}RL${RESET} ${RL5_COLOR}5h:$(fmt_rl_display "$RL_5H")${RESET} ${RL7_COLOR}7d:$(fmt_rl_display "$RL_7D")${RESET}"
+
+# Braille Dots rate limit bars
+RL_BAR_WIDTH=5
+if [ "$RL_5H" = "?" ]; then
+    RL5_BAR="${GRAY}?${RESET}"
+    RL5_PCT="?"
+else
+    RL5_BAR=$(braille_bar "$RL_5H" "$RL_BAR_WIDTH" "$RL5_COLOR" "$DIM")
+    RL5_PCT="${RL_5H}%"
+fi
+if [ "$RL_7D" = "?" ]; then
+    RL7_BAR="${GRAY}?${RESET}"
+    RL7_PCT="?"
+else
+    RL7_BAR=$(braille_bar "$RL_7D" "$RL_BAR_WIDTH" "$RL7_COLOR" "$DIM")
+    RL7_PCT="${RL_7D}%"
+fi
+
+LINE2="${LINE2}${SEP}${RL5_COLOR}5h${RESET} ${RL5_BAR} ${RL5_COLOR}${RL5_PCT}${RESET} ${RL7_COLOR}7d${RESET} ${RL7_BAR} ${RL7_COLOR}${RL7_PCT}${RESET}"
 
 echo -e "$LINE1"
 echo -e "$LINE2"
