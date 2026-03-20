@@ -84,7 +84,7 @@
       "Bash(DATE=*)",
       "Skill(*)"
     ],
-    "defaultMode": "default"
+    "defaultMode": "acceptEdits"
   },
   "hooks": {
     "Stop": [
