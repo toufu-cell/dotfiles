@@ -87,28 +87,8 @@
     "defaultMode": "acceptEdits"
   },
   "hooks": {
-    "SessionStart": [
-      {
-        "matcher": "startup|resume|compact",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/session-start.sh",
-            "async": false
-          }
-        ]
-      }
-    ],
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/session-end.sh"
-          }
-        ]
-      }
-    ],
+    "SessionStart": [],
+    "SessionEnd": [],
     "Stop": [
       {
         "hooks": [
@@ -119,16 +99,7 @@
         ]
       }
     ],
-    "PreCompact": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "bash ~/.claude/hooks/pre-compact.sh"
-          }
-        ]
-      }
-    ],
+    "PreCompact": [],
     "Notification": [
       {
         "matcher": "permission_prompt",

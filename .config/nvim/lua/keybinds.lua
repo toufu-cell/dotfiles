@@ -70,27 +70,53 @@ vim.keymap.set('n', '<Leader>nd', '<cmd>Noice dismiss<CR>', { desc = 'Noice: Dis
 vim.keymap.set('n', '<Leader>nl', '<cmd>Noice last<CR>', { desc = 'Noice: Last message' })
 vim.keymap.set('n', '<Leader>nh', '<cmd>Noice history<CR>', { desc = 'Noice: Message history' })
 
--- :messages の内容をクリップボードにコピー（noice.nvim 対応）
+-- :messages の内容をクリップボードにコピー（snacks notifier + noice.nvim + :messages）
+local CM_SELF_MSGS = { 'Messages copied to clipboard', 'No messages to copy' }
 vim.keymap.set('n', '<Leader>cm', function()
-    local has_noice, manager = pcall(require, 'noice.message.manager')
-    if has_noice then
-        local config = require('noice.config')
-        local filter = config.options.commands.history.filter
-        local messages = manager.get(filter, { history = true, sort = true })
-        local lines = {}
-        for _, msg in ipairs(messages) do
-            table.insert(lines, msg:content())
+    local lines = {}
+    local seen = {}
+    local function add(text)
+        if text and text ~= '' and not seen[text] then
+            for _, self_msg in ipairs(CM_SELF_MSGS) do
+                if text == self_msg then return end
+            end
+            seen[text] = true
+            table.insert(lines, text)
         end
-        vim.fn.setreg('+', table.concat(lines, '\n'))
-        vim.notify('Noice history copied to clipboard', vim.log.levels.INFO)
-        return
     end
-    local ok, result = pcall(vim.api.nvim_exec2, 'messages', { output = true })
-    if ok then
-        vim.fn.setreg('+', result.output)
+    -- 1. snacks notifier の通知履歴
+    pcall(function()
+        for _, notif in ipairs(Snacks.notifier.get_history()) do
+            add(notif.msg)
+        end
+    end)
+    -- 2. noice.nvim の msg_show 履歴（active + history）
+    pcall(function()
+        local config = require('noice.config')
+        if not config.is_running() then return end
+        local manager = require('noice.message.manager')
+        local filter = { event = 'msg_show' }
+        for _, msg in ipairs(manager.get(filter, { sort = true })) do
+            add(msg:content())
+        end
+        for _, msg in ipairs(manager.get(filter, { history = true, sort = true })) do
+            add(msg:content())
+        end
+    end)
+    -- 3. フォールバック: :messages
+    if #lines == 0 then
+        pcall(function()
+            local result = vim.api.nvim_exec2('messages', { output = true })
+            if result.output and result.output ~= '' then
+                add(result.output)
+            end
+        end)
+    end
+    if #lines > 0 then
+        vim.fn.setreg('+', table.concat(lines, '\n'))
         vim.notify('Messages copied to clipboard', vim.log.levels.INFO)
     else
-        vim.notify('Failed to copy messages', vim.log.levels.ERROR)
+        vim.notify('No messages to copy', vim.log.levels.WARN)
     end
 end, { desc = 'Copy messages to clipboard', silent = true })
 

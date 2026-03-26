@@ -36,8 +36,7 @@
 # Claude Code - ntfy.sh credentials (keep ntfy.conf.example only)
 .config/.claude/hooks/ntfy.conf
 
-# Claude Code - session persistence (machine-local)
-.config/.claude/session-store/
+# Claude Code - learned patterns (machine-local)
 .config/.claude/skills/learned/
 
 # Claude Code - personal settings and cache
